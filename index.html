@@ -1,0 +1,666 @@
+```html
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumi AI — Քո խելացի օգնականը</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #0c0d14;
+    --sidebar: #11121b;
+    --panel: #171923;
+    --text: #f5f5fb;
+    --muted: #9294a8;
+    --border: #292b3a;
+    --accent: #a78bfa;
+    --accent2: #67e8f9;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    transition: 0.3s;
+}
+
+.app {
+    display: flex;
+    height: 100vh;
+}
+
+/* Ձախ մենյու */
+
+.sidebar {
+    width: 255px;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+    padding: 22px 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+    margin: 8px 7px 30px;
+    letter-spacing: -1px;
+}
+
+.logo span {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.new-chat {
+    padding: 13px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    border-radius: 13px;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: left;
+    transition: .2s;
+}
+
+.new-chat:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.menu-title {
+    color: var(--muted);
+    font-size: 12px;
+    margin: 28px 8px 12px;
+}
+
+.menu-item {
+    color: var(--muted);
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.menu-item:hover {
+    background: var(--panel);
+    color: var(--text);
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+}
+
+/* Հիմնական պատուհան */
+
+.main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.topbar {
+    height: 65px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+}
+
+.model-name {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.top-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.icon-btn {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 9px 12px;
+    cursor: pointer;
+}
+
+.icon-btn:hover {
+    border-color: var(--accent);
+}
+
+/* Զրույց */
+
+.chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 25px 18px 15px;
+}
+
+.chat-inner {
+    max-width: 790px;
+    margin: auto;
+}
+
+.welcome {
+    text-align: center;
+    margin: 12vh auto 35px;
+    animation: appear .6s ease;
+}
+
+.orb {
+    width: 78px;
+    height: 78px;
+    margin: 0 auto 24px;
+    border-radius: 25px;
+    display: grid;
+    place-items: center;
+    font-size: 37px;
+    background: linear-gradient(135deg, #a78bfa, #67e8f9);
+    box-shadow: 0 0 55px #a78bfa30;
+    transform: rotate(-5deg);
+}
+
+.welcome h1 {
+    font-size: clamp(27px, 4vw, 38px);
+    margin-bottom: 13px;
+    letter-spacing: -1px;
+}
+
+.welcome h1 span {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.welcome p {
+    color: var(--muted);
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.suggestions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.suggestion {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-align: left;
+    padding: 17px;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.suggestion:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+}
+
+.suggestion b {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 14px;
+}
+
+.suggestion small {
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+/* Հաղորդագրություններ */
+
+.message {
+    display: flex;
+    gap: 13px;
+    margin: 24px 0;
+    animation: appear .25s ease;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.avatar {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 17px;
+}
+
+.user-avatar {
+    background: #303146;
+}
+
+.ai-avatar {
+    background: linear-gradient(135deg, #a78bfa, #67e8f9);
+}
+
+.message-content {
+    padding-top: 4px;
+    font-size: 15px;
+    flex: 1;
+}
+
+.message-name {
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
+.ai-content {
+    color: var(--text);
+}
+
+.user-content {
+    background: var(--panel);
+    padding: 12px 16px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+}
+
+/* Մուտքագրման դաշտ */
+
+.composer-area {
+    padding: 12px 18px 20px;
+}
+
+.composer-wrap {
+    max-width: 790px;
+    margin: auto;
+}
+
+.composer {
+    background: var(--panel);
+    border: 1px solid #35374b;
+    border-radius: 20px;
+    padding: 12px 13px 12px 18px;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    transition: .2s;
+}
+
+.composer:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px #a78bfa12;
+}
+
+textarea {
+    flex: 1;
+    min-width: 0;
+    resize: none;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 15px;
+    line-height: 1.6;
+    max-height: 150px;
+}
+
+textarea::placeholder {
+    color: var(--muted);
+}
+
+.send-btn {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 13px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #10111a;
+    font-size: 21px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.send-btn:hover {
+    transform: scale(1.06);
+}
+
+.send-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.disclaimer {
+    color: var(--muted);
+    font-size: 11px;
+    text-align: center;
+    margin-top: 11px;
+}
+
+/* Փոքր էկրաններ */
+
+@keyframes appear {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 650px) {
+    .sidebar {
+        display: none;
+    }
+
+    .topbar {
+        padding: 0 15px;
+    }
+
+    .chat {
+        padding: 15px 13px;
+    }
+
+    .welcome {
+        margin-top: 8vh;
+    }
+
+    .suggestions {
+        grid-template-columns: 1fr;
+    }
+
+    .composer-area {
+        padding: 10px 12px 14px;
+    }
+}
+
+/* Բաց թեմա */
+
+body.light {
+    --bg: #f7f7fc;
+    --sidebar: #ffffff;
+    --panel: #ffffff;
+    --text: #202132;
+    --muted: #77798d;
+    --border: #e4e5ef;
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+    <aside class="sidebar">
+        <div class="logo">✦ lumi<span>.ai</span></div>
+
+        <button class="new-chat" onclick="newChat()">
+            ＋ Նոր զրույց
+        </button>
+
+        <div class="menu-title">ՔՈ ՕԳՆԱԿԱՆԸ</div>
+
+        <div class="menu-item" onclick="ask('Օգնիր ինձ սովորել նոր բան')">
+            ✧ Սովորել նոր բան
+        </div>
+
+        <div class="menu-item" onclick="ask('Օգնիր ինձ գրել գեղեցիկ տեքստ')">
+            ✎ Գրել տեքստ
+        </div>
+
+        <div class="menu-item" onclick="ask('Առաջարկիր հետաքրքիր գաղափարներ')">
+            ♡ Գաղափարներ
+        </div>
+
+        <div class="menu-item" onclick="ask('Օգնիր ինձ ծրագրավորել HTML-ով')">
+            </> Ծրագրավորում
+        </div>
+
+        <div class="sidebar-bottom">
+            <div class="menu-item" onclick="toggleTheme()">
+                ◐ Փոխել թեման
+            </div>
+            <div class="menu-item" onclick="showAbout()">
+                ⓘ Մեր մասին
+            </div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <div class="model-name">Lumi AI <span style="color:#a78bfa">✦</span></div>
+
+            <div class="top-actions">
+                <button class="icon-btn" onclick="newChat()" title="Նոր զրույց">
+                    ＋
+                </button>
+                <button class="icon-btn" onclick="toggleTheme()" title="Թեմա">
+                    ◐
+                </button>
+            </div>
+        </div>
+
+        <div class="chat" id="chat">
+            <div class="chat-inner" id="chatInner">
+
+                <div class="welcome" id="welcome">
+                    <div class="orb">✦</div>
+
+                    <h1>Բարև՛, ի՞նչ <span>անենք այսօր։</span></h1>
+
+                    <p>
+                        Ես քո թվային օգնականն եմ։<br>
+                        Կարող ես հարցնել, սովորել, ստեղծագործել ու նոր բաներ բացահայտել։
+                    </p>
+
+                    <div class="suggestions">
+                        <button class="suggestion"
+                            onclick="ask('Բացատրիր տիեզերքը պարզ բառերով')">
+                            <b>🌌 Բացահայտել աշխարհը</b>
+                            <small>Իմացիր հետաքրքիր փաստեր ու նոր բաներ</small>
+                        </button>
+
+                        <button class="suggestion"
+                            onclick="ask('Օգնիր ինձ ստեղծել գեղեցիկ կայք HTML-ով')">
+                            <b>💻 Ստեղծել կայք</b>
+                            <small>Ծրագրավորում, HTML, CSS և գաղափարներ</small>
+                        </button>
+
+                        <button class="suggestion"
+                            onclick="ask('Օգնիր ինձ տնային առաջադրանքի հետ')">
+                            <b>📚 Սովորել հեշտությամբ</b>
+                            <small>Բացատրություններ ու տնային առաջադրանքներ</small>
+                        </button>
+
+                        <button class="suggestion"
+                            onclick="ask('Առաջարկիր մի քանի ստեղծագործ գաղափար')">
+                            <b>🎨 Ստեղծագործել</b>
+                            <small>Նոր մտքեր, պատմություններ ու դիզայն</small>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="composer-area">
+            <div class="composer-wrap">
+                <div class="composer">
+                    <textarea
+                        id="input"
+                        rows="1"
+                        placeholder="Գրիր քո հարցը..."
+                        aria-label="Գրիր քո հաղորդագրությունը"
+                    ></textarea>
+
+                    <button class="send-btn" id="sendBtn"
+                        onclick="sendMessage()" aria-label="Ուղարկել">
+                        ↑
+                    </button>
+                </div>
+
+                <div class="disclaimer">
+                    Lumi AI-ի ցուցադրական տարբերակն է։ Պատասխանները դեռ իրական AI-ի միջոցով չեն ստեղծվում։
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+const input = document.getElementById("input");
+const chatInner = document.getElementById("chatInner");
+const chat = document.getElementById("chat");
+const sendBtn = document.getElementById("sendBtn");
+
+input.addEventListener("input", () => {
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 150) + "px";
+});
+
+input.addEventListener("keydown", event => {
+    if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+    }
+});
+
+function ask(text) {
+    input.value = text;
+    sendMessage();
+}
+
+function addMessage(text, isAI) {
+    const message = document.createElement("div");
+    message.className = "message";
+
+    const avatar = document.createElement("div");
+    avatar.className = "avatar " + (isAI ? "ai-avatar" : "user-avatar");
+    avatar.textContent = isAI ? "✦" : "☺";
+
+    const content = document.createElement("div");
+    content.className = "message-content";
+
+    const name = document.createElement("div");
+    name.className = "message-name";
+    name.textContent = isAI ? "Lumi AI" : "Դու";
+
+    const body = document.createElement("div");
+    body.className = isAI ? "ai-content" : "user-content";
+    body.textContent = text;
+
+    content.appendChild(name);
+    content.appendChild(body);
+    message.appendChild(avatar);
+    message.appendChild(content);
+    chatInner.appendChild(message);
+
+    chat.scrollTop = chat.scrollHeight;
+    return body;
+}
+
+function getDemoReply(text) {
+    const t = text.toLowerCase();
+
+    if (t.includes("բարև") || t.includes("բարեւ") || t.includes("hello")) {
+        return "Բարև՜ 😊 Ուրախ եմ քեզ տեսնել։ Ի՞նչ կուզես այսօր անել։";
+    }
+
+    if (t.includes("html") || t.includes("կայք") || t.includes("ծրագր")) {
+        return "Իհարկե՛ 💻 Կարող եմ օգնել HTML-ի, CSS-ի և JavaScript-ի հետ։ Ասա՝ ինչպիսի կայք ես ուզում ստեղծել, և միասին կկազմենք դրա կոդը։";
+    }
+
+    if (t.includes("տնային") || t.includes("դաս") || t.includes("մաթեմատ")) {
+        return "Սիրով կօգնեմ 📚 Ուղարկիր առաջադրանքը, և ես կփորձեմ այն բացատրել պարզ ու հասկանալի ձևով։";
+    }
+
+    if (t.includes("գաղափար") || t.includes("ստեղծագործ")) {
+        return "Ահա մի գաղափար ✨ Ստեղծիր մի փոքրիկ նախագիծ, ընտրիր սիրելի գույները և ավելացրու քո ոճը։ Եթե ասես թեման, կառաջարկեմ ավելի կոնկրետ տարբերակներ։";
+    }
+
+    if (t.includes("roblox") || t.includes("brawl stars")) {
+        return "🎮 Կարող եմ օգնել խաղերի վերաբերյալ գաղափարներով, խորհուրդներով և տեղեկություններով։ Եթե նորություններ ես փնտրում, ստուգիր նաև խաղի պաշտոնական աղբյուրները։";
+    }
+
+    return "Շնորհակալ եմ հարցիդ համար։ 💜 Այս պահին ես ցուցադրական տարբերակ եմ, ուստի չեմ կարող իրական AI-ի նման պատասխանել բոլոր հարցերին։ Ինձ լիարժեք օգնական դարձնելու համար պետք է միացնել AI ծառայություն։";
+}
+
+function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    const welcome = document.getElementById("welcome");
+    if (welcome) welcome.remove();
+
+    addMessage(text, false);
+
+    input.value = "";
+    input.style.height = "auto";
+    sendBtn.disabled = true;
+
+    const reply = getDemoReply(text);
+
+    setTimeout(() => {
+        addMessage(reply, true);
+        sendBtn.disabled = false;
+        input.focus();
+    }, 500);
+}
+
+function newChat() {
+    chatInner.innerHTML = `
+        <div class="welcome" id="welcome">
+            <div class="orb">✦</div>
+            <h1>Բարև՛, ի՞նչ <span>անենք այսօր։</span></h1>
+            <p>Ես քո թվային օգնականն եմ։<br>
+            Կարող ես հարցնել, սովորել, ստեղծագործել ու նոր բաներ բացահայտել։</p>
+            <div class="suggestions">
+                <button class="suggestion" onclick="ask('Բացատրիր տիեզերքը պարզ բառերով')">
+                    <b>🌌 Բացահայտել աշխարհը</b>
+                    <small>Հետաքրքիր փաստեր ու նոր բաներ</small>
+                </button>
+                <button class="suggestion" onclick="ask('Օգնիր ինձ ստեղծել գեղեցիկ կայք HTML-ով')">
+                    <b>💻 Ստեղծել կայք</b>
+                    <small>Ծրագրավորում և գաղափարներ</small>
+                </button>
+                <button class="suggestion" onclick="ask('Օգնիր ինձ տնային առաջադրանքի հետ')">
+                    <b>📚 Սովորել հեշտությամբ</b>
+                    <small>Բացատրություններ ու առաջադրանքներ</small>
+                </button>
+                <button class="suggestion" onclick="ask('Առաջարկիր ստեղծագործ գաղափարներ')">
+                    <b>🎨 Ստեղծագործել</b>
+                    <small>Նոր մտքեր ու դիզայն</small>
+                </button>
+            </div>
+        </div>
+    `;
+    input.value = "";
+    input.focus();
+}
+
+function toggleTheme() {
+    document.body.classList.toggle("light");
+}
+
+function showAbout() {
+    alert("Lumi AI ✦\nԳեղեցիկ հայկական AI չաթի ցուցադրական տարբերակ։\nԻրական AI պատասխանների համար անհրաժեշտ է միացնել AI ծառայություն։");
+}
+</script>
+</body>
+</html>
+```
