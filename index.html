@@ -3,70 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Իմ AI Օգնականը</title>
+  <title>Հանրային AI Չատբոտ</title>
+  <!-- Puter.js AI SDK (ապահովում է անվճար AI առանց API Key-ի) -->
+  <script src="https://js.puter.com/v2/"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: #121214; color: #e1e1e6; display: flex; flex-direction: column; height: 100vh; }
-    
-    header { background: #1a1a1e; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #29292e; }
-    header h1 { font-size: 18px; color: #04d361; }
-    button.key-btn { background: #29292e; color: #fff; border: 1px solid #3e3e46; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
-    button.key-btn:hover { background: #3e3e46; }
+    body { background-color: #0f172a; color: #f8fafc; display: flex; flex-direction: column; height: 100vh; }
 
-    #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
-    .message { max-width: 80%; padding: 12px 16px; border-radius: 12px; line-height: 1.5; font-size: 15px; white-space: pre-wrap; word-break: break-word; }
-    .user { align-self: flex-end; background-color: #04d361; color: #000; font-weight: 500; border-bottom-right-radius: 2px; }
-    .ai { align-self: flex-start; background-color: #202024; color: #e1e1e6; border-bottom-left-radius: 2px; border: 1px solid #29292e; }
+    header { background: #1e293b; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #334155; }
+    header h1 { font-size: 18px; color: #38bdf8; display: flex; align-items: center; gap: 8px; }
+    .status-badge { font-size: 12px; background: #059669; color: #fff; padding: 3px 8px; border-radius: 12px; }
 
-    footer { padding: 15px 20px; background: #1a1a1e; border-top: 1px solid #29292e; }
-    .input-box { display: flex; gap: 10px; max-width: 900px; margin: 0 auto; }
-    input[type="text"] { flex: 1; background: #121214; border: 1px solid #323238; color: #fff; padding: 12px 16px; border-radius: 8px; font-size: 15px; outline: none; }
-    input[type="text"]:focus { border-color: #04d361; }
-    button.send-btn { background: #04d361; color: #000; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    button.send-btn:hover { background: #00b352; }
+    #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .message { max-width: 80%; padding: 12px 18px; border-radius: 16px; line-height: 1.5; font-size: 15px; word-break: break-word; white-space: pre-wrap; }
+    .user { align-self: flex-end; background-color: #38bdf8; color: #0f172a; font-weight: 500; border-bottom-right-radius: 4px; }
+    .ai { align-self: flex-start; background-color: #1e293b; color: #f1f5f9; border: 1px solid #334155; border-bottom-left-radius: 4px; }
+
+    footer { padding: 16px; background: #1e293b; border-top: 1px solid #334155; }
+    .input-box { display: flex; gap: 10px; max-width: 800px; margin: 0 auto; }
+    input[type="text"] { flex: 1; background: #0f172a; border: 1px solid #475569; color: #fff; padding: 14px 18px; border-radius: 10px; font-size: 15px; outline: none; }
+    input[type="text"]:focus { border-color: #38bdf8; }
+    button.send-btn { background: #38bdf8; color: #0f172a; border: none; padding: 0 22px; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.2s; }
+    button.send-btn:hover { background: #0ea5e9; }
+    button.send-btn:disabled { background: #475569; cursor: not-allowed; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>🤖 Իմ AI Չատբոտ</h1>
-    <button class="key-btn" onclick="promptApiKey()">🔑 Փոխել API Key-ը</button>
+    <h1>🤖 Ընդհանուր AI Օգնական</h1>
+    <span class="status-badge">Ակտիվ է բոլորի համար</span>
   </header>
 
   <div id="chat-container">
-    <div class="message ai">Ողջույն։ Ես քո AI օգնականն եմ։ Ինչո՞վ կարող եմ օգնել։</div>
+    <div class="message ai">Ողջո՜ւյն: Կարող ես ինձ տալ ցանկացած հարց, ես պատրաստ եմ օգնել:</div>
   </div>
 
   <footer>
     <form class="input-box" onsubmit="handleSend(event)">
       <input type="text" id="userInput" placeholder="Գրիր հարցդ այստեղ..." autocomplete="off" />
-      <button type="submit" class="send-btn">Ուղարկել</button>
+      <button type="submit" id="sendBtn" class="send-btn">Ուղարկել</button>
     </form>
   </footer>
 
   <script>
     const chatContainer = document.getElementById('chat-container');
     const userInput = document.getElementById('userInput');
-    let history = [
-      { role: "system", content: "You are a helpful, smart, and friendly AI assistant. Answer in the language the user speaks." }
-    ];
-
-    function getApiKey() {
-      let key = localStorage.getItem('groq_api_key');
-      if (!key) {
-        key = prompt("Խնդրում ենք մուտքագրել քո անվճար Groq API Key-ը (կարող ես վերցնել console.groq.com կայքից)՝");
-        if (key) localStorage.setItem('groq_api_key', key.trim());
-      }
-      return key;
-    }
-
-    function promptApiKey() {
-      const key = prompt("Մուտքագրիր նոր Groq API Key-ը՝", localStorage.getItem('groq_api_key') || '');
-      if (key !== null) {
-        localStorage.setItem('groq_api_key', key.trim());
-        alert("API Key-ը պահպանվեց:");
-      }
-    }
+    const sendBtn = document.getElementById('sendBtn');
 
     function appendMessage(text, sender) {
       const msg = document.createElement('div');
@@ -74,6 +57,7 @@
       msg.innerText = text;
       chatContainer.appendChild(msg);
       chatContainer.scrollTop = chatContainer.scrollHeight;
+      return msg;
     }
 
     async function handleSend(e) {
@@ -81,46 +65,33 @@
       const text = userInput.value.trim();
       if (!text) return;
 
-      const apiKey = getApiKey();
-      if (!apiKey) {
-        alert("Առանց API Key-ի AI-ը չի կարող պատասխանել:");
-        return;
-      }
-
+      // Օգտատիրոջ հաղորդագրությունը
       appendMessage(text, 'user');
       userInput.value = '';
-      history.push({ role: "user", content: text });
+      userInput.disabled = true;
+      sendBtn.disabled = true;
 
-      // AI-ի պատասխանի սպասման նշան
-      const loadingMsg = document.createElement('div');
-      loadingMsg.className = 'message ai';
-      loadingMsg.innerText = 'Մտածում է...';
-      chatContainer.appendChild(loadingMsg);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
+      // AI-ի պատասխանի բլոկ
+      const aiMsg = appendMessage("...", 'ai');
 
       try {
-        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${apiKey}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            model: "llama-3.3-70b-versatile",
-            messages: history,
-            temperature: 0.7
-          })
-        });
+        // Կանչում ենք Puter.js AI-ը (հոսքային տարբերակով՝ տառ առ տառ)
+        const response = await puter.ai.chat(text, { stream: true });
+        aiMsg.innerText = "";
 
-        const data = await response.json();
-        if (data.error) throw new Error(data.error.message);
-
-        const aiResponse = data.choices[0].message.content;
-        loadingMsg.innerText = aiResponse;
-        history.push({ role: "assistant", content: aiResponse });
+        for await (const part of response) {
+          if (part?.text) {
+            aiMsg.innerText += part.text;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+          }
+        }
       } catch (err) {
-        loadingMsg.innerText = "Սխալ՝ " + err.message;
-        loadingMsg.style.color = "#ff6b6b";
+        aiMsg.innerText = "Սխալ՝ " + (err.message || "Չհաջողվեց կապ հաստատել");
+        aiMsg.style.color = "#f87171";
+      } finally {
+        userInput.disabled = false;
+        sendBtn.disabled = false;
+        userInput.focus();
       }
     }
   </script>
