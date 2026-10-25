@@ -1,182 +1,128 @@
 <!DOCTYPE html>
 <html lang="hy">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>LUMI AI</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;600;700&display=swap">
-<style>
-:root{--bg:#ffffff;--pn:#f4f4f6;--tx:#1b1b1f;--mu:#6b6b76;--ac:#4f46e5;--ax:#ffffff;--bd:#e3e3e8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme]){--bg:#0b0b0e;--pn:#15151a;--tx:#ececf1;--mu:#9a9aa6;--ac:#e8e8ee;--ax:#0b0b0e;--bd:#26262e}}
-:root[data-theme="white"]{--bg:#ffffff;--pn:#f4f4f6;--tx:#1b1b1f;--mu:#6b6b76;--ac:#4f46e5;--ax:#ffffff;--bd:#e3e3e8}
-:root[data-theme="black"]{--bg:#0b0b0e;--pn:#15151a;--tx:#ececf1;--mu:#9a9aa6;--ac:#e8e8ee;--ax:#0b0b0e;--bd:#26262e}
-:root[data-theme="purple"]{--bg:#120a24;--pn:#1c1136;--tx:#f1eaff;--mu:#b2a3d9;--ac:#a855f7;--ax:#ffffff;--bd:#33215c}
-:root[data-theme="red"]{--bg:#1a0a0c;--pn:#2a1114;--tx:#ffecec;--mu:#d9a3a8;--ac:#ef4444;--ax:#ffffff;--bd:#4a1c22}
-:root[data-theme="blue"]{--bg:#0a1424;--pn:#0f1d35;--tx:#e8f1ff;--mu:#9db4d9;--ac:#3b82f6;--ax:#ffffff;--bd:#1d3358}
-:root[data-theme="green"]{--bg:#08170f;--pn:#0d2417;--tx:#e8fff1;--mu:#9ad9b4;--ac:#22c55e;--ax:#04210f;--bd:#1a3d29}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{background:var(--bg);color:var(--tx);font-family:"Noto Sans Armenian","Segoe UI",Arial,sans-serif;font-size:15px}
-button,textarea,select,input{font:inherit;color:inherit}
-button{cursor:pointer}
-#app{display:flex;height:100%}
-#side{width:270px;background:var(--pn);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:12px;gap:8px}
-.logo{font-weight:700;font-size:1.3rem;letter-spacing:.14em;display:flex;align-items:center;gap:8px}
-.logo i{width:22px;height:22px;border-radius:7px;background:var(--ac);display:inline-block}
-.btn{border:1px solid var(--bd);background:transparent;border-radius:10px;padding:9px 12px;text-align:left}
-.btn:hover{border-color:var(--ac)}
-.btn.p{background:var(--ac);color:var(--ax);border-color:var(--ac);text-align:center;font-weight:600}
-#list{flex:1;overflow:auto;display:flex;flex-direction:column;gap:4px}
-.ci{display:flex;align-items:center;border-radius:9px;padding:8px 10px;cursor:pointer;gap:6px}
-.ci:hover,.ci.on{background:var(--bg)}
-.ci span{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.ci b{opacity:.5;font-weight:400}
-.ci b:hover{opacity:1}
-#main{flex:1;display:flex;flex-direction:column;min-width:0}
-#top{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--bd)}
-#top .sp{flex:1;color:var(--mu)}
-#menu{display:none}
-.sw{width:20px;height:20px;border-radius:50%;border:2px solid var(--bd);padding:0}
-.sw.on{outline:2px solid var(--ac);outline-offset:2px}
-#msgs{flex:1;overflow:auto;padding:18px 14px}
-.w{max-width:760px;margin:0 auto}
-.m{margin:0 0 18px;line-height:1.65}
-.m.u{background:var(--pn);border:1px solid var(--bd);border-radius:14px;padding:10px 14px;margin-left:auto;width:fit-content;max-width:85%;white-space:pre-wrap}
-.m.a p,.m.a ul,.m.a ol{margin:.5em 0}
-.m.a h4{margin:.9em 0 .3em;font-size:1.05rem}
-.m.a code{background:var(--pn);border:1px solid var(--bd);border-radius:5px;padding:1px 5px;font-family:Consolas,monospace;font-size:.9em}
-.m.a pre{background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:12px;overflow-x:auto;position:relative}
-.m.a pre code{border:0;padding:0;background:none}
-.cp{position:absolute;right:8px;top:8px;font-size:.75rem;padding:3px 8px;border-radius:7px;border:1px solid var(--bd);background:var(--bg)}
-.act{margin-top:4px}
-.act button{font-size:.78rem;color:var(--mu);background:none;border:0;padding:2px 6px}
-#hero{text-align:center;margin:12vh auto 0;max-width:560px}
-#hero h1{font-size:2.4rem;letter-spacing:.2em;margin:0 0 6px}
-#hero p{color:var(--mu)}
-.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:20px}
-#bar{padding:10px 14px calc(12px + env(safe-area-inset-bottom,0px))}
-#box{display:flex;gap:8px;align-items:flex-end;border:1px solid var(--bd);background:var(--pn);border-radius:16px;padding:8px}
-#in{flex:1;border:0;background:none;resize:none;outline:none;max-height:180px;padding:6px 8px;line-height:1.5}
-#go{border:0;border-radius:11px;background:var(--ac);color:var(--ax);padding:9px 16px;font-weight:600}
-#note{text-align:center;color:var(--mu);font-size:.75rem;margin-top:6px}
-#ban{display:none;background:var(--pn);border-bottom:1px solid var(--bd);padding:8px 14px;text-align:center}
-dialog{background:var(--bg);color:var(--tx);border:1px solid var(--bd);border-radius:16px;padding:18px;width:min(520px,92vw)}
-dialog::backdrop{background:rgba(0,0,0,.5)}
-dialog label{display:block;margin:12px 0 4px;font-weight:600}
-dialog textarea,dialog select{width:100%;background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:8px}
-@media (max-width:800px){#side{position:fixed;inset:0 auto 0 0;z-index:9;transform:translateX(-100%);transition:transform .2s;padding-top:calc(12px + env(safe-area-inset-top,0px))}#side.open{transform:none}#menu{display:block}.sg{grid-template-columns:1fr}}
-@media (prefers-reduced-motion:reduce){#side{transition:none}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Իմ AI Օգնականը</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #121214; color: #e1e1e6; display: flex; flex-direction: column; height: 100vh; }
+    
+    header { background: #1a1a1e; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #29292e; }
+    header h1 { font-size: 18px; color: #04d361; }
+    button.key-btn { background: #29292e; color: #fff; border: 1px solid #3e3e46; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+    button.key-btn:hover { background: #3e3e46; }
+
+    #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+    .message { max-width: 80%; padding: 12px 16px; border-radius: 12px; line-height: 1.5; font-size: 15px; white-space: pre-wrap; word-break: break-word; }
+    .user { align-self: flex-end; background-color: #04d361; color: #000; font-weight: 500; border-bottom-right-radius: 2px; }
+    .ai { align-self: flex-start; background-color: #202024; color: #e1e1e6; border-bottom-left-radius: 2px; border: 1px solid #29292e; }
+
+    footer { padding: 15px 20px; background: #1a1a1e; border-top: 1px solid #29292e; }
+    .input-box { display: flex; gap: 10px; max-width: 900px; margin: 0 auto; }
+    input[type="text"] { flex: 1; background: #121214; border: 1px solid #323238; color: #fff; padding: 12px 16px; border-radius: 8px; font-size: 15px; outline: none; }
+    input[type="text"]:focus { border-color: #04d361; }
+    button.send-btn { background: #04d361; color: #000; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    button.send-btn:hover { background: #00b352; }
+  </style>
 </head>
 <body>
-<div id="app">
-<aside id="side">
-<div class="logo"><i></i>LUMI</div>
-<button class="btn p" id="new">＋ Նոր զրույց</button>
-<div id="list"></div>
-<button class="btn" id="setb">⚙️ Կարգավորումներ</button>
-</aside>
-<section id="main">
-<div id="top"><button class="btn" id="menu">☰</button><div class="sp" id="ttl">LUMI AI</div><div id="sws" style="display:flex;gap:7px"></div></div>
-<div id="ban"></div>
-<div id="msgs"><div class="w" id="cv"></div></div>
-<div id="bar"><div class="w"><div id="box"><textarea id="in" rows="1" placeholder="Գրիր քո հարցը կամ խնդիրը..."></textarea><button id="go">Ուղարկել</button></div><div id="note">LUMI AI-ը կարող է սխալվել։ Կարևոր տեղեկությունները ստուգիր։ Ինտերնետում ուղիղ չի փնտրում։</div></div></div>
-</section>
-</div>
-<dialog id="dlg">
-<h3 style="margin-top:0">Կարգավորումներ</h3>
-<label>Գույնի թեմա</label><div id="sws2" style="display:flex;gap:10px"></div>
-<label>Աշխատանքի ռեժիմ</label>
-<select id="role"><option value="general">Ընդհանուր օգնական</option><option value="code">Ծրագրավորում</option><option value="write">Գրություն և խմբագրում</option><option value="analyze">Վերլուծություն և հետազոտություն</option><option value="translate">Թարգմանիչ</option></select>
-<label>Պատասխանի խորություն</label>
-<select id="tier"><option value="quick">Արագ</option><option value="default">Հավասարակշռված</option><option value="complex">Խորը (ավելի դանդաղ)</option></select>
-<label>Սովորեցրու LUMI-ին՝ կանոններ և ոճ</label>
-<textarea id="cus" rows="3" placeholder="Օր.՝ Պատասխանիր կարճ և գործնական։ Ես ծրագրավորող եմ։"></textarea>
-<label>Փաստեր, որ LUMI-ն միշտ պետք է հիշի</label>
-<textarea id="nts" rows="3" placeholder="Օր.՝ Իմ ընկերությունը վաճառում է... Թիրախ հաճախորդները..."></textarea>
-<label>Anthropic API բանալի (պահվում է միայն քո բրաուզերում)</label><input id="key" type="password" placeholder="sk-ant-..." style="width:100%;background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:8px">
-<label>Կամ քո սերվերի հասցեն (proxy, ոչ պարտադիր)</label><input id="prx" placeholder="https://քո-սերվերը/chat" style="width:100%;background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:8px">
-<div style="display:flex;gap:8px;margin-top:16px;justify-content:space-between"><button class="btn" id="clr">🗑 Ջնջել բոլոր զրույցները</button><button class="btn p" id="ok">Պահպանել</button></div>
-</dialog>
-<script>
-const $=s=>document.querySelector(s);
-const TH=[['white','#ffffff'],['black','#111114'],['purple','#a855f7'],['red','#ef4444'],['blue','#3b82f6'],['green','#22c55e']];
-const RL={general:'General-purpose assistant.',code:'Focus on software engineering: write correct, minimal, well-commented code in fenced code blocks, explain trade-offs briefly, point out bugs and edge cases.',write:'Focus on writing and editing: improve clarity, tone and structure, offer concise alternatives, keep the author voice.',analyze:'Focus on analysis and research: break problems down, compare options, state assumptions, give a clear recommendation with reasoning.',translate:'Focus on translation: translate faithfully between languages, preserve tone and formatting, note ambiguous phrases briefly.'};
-let S={chats:[],cur:null,set:{theme:null,tier:'default',role:'general',cus:'',nts:''}},SM=null,PM=null,busy=false,ctl=null;
-const ld=()=>{try{const x=JSON.parse(localStorage.getItem('lumi:v1'));if(x&&x.chats)S=Object.assign(S,x)}catch(e){}};
-const sv=()=>{try{localStorage.setItem('lumi:v1',JSON.stringify(S))}catch(e){}};
-ld();
-const uid=()=>Math.random().toString(36).slice(2,9);
-const chat=()=>S.chats.find(c=>c.id==S.cur);
-// theme
-function theme(t){S.set.theme=t;document.documentElement.setAttribute('data-theme',t);document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('on',b.dataset.t==t));sv()}
-for(const id of ['#sws','#sws2'])$(id).innerHTML=TH.map(t=>'<button class="sw" title="'+t[0]+'" data-t="'+t[0]+'" style="background:'+t[1]+'"></button>').join('');
-document.addEventListener('click',e=>{const t=e.target.dataset&&e.target.dataset.t;if(t&&e.target.classList.contains('sw'))theme(t)});
-if(S.set.theme)theme(S.set.theme);else document.documentElement.setAttribute('data-theme',matchMedia('(prefers-color-scheme: dark)').matches?'black':'white');
-document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('on',b.dataset.t==document.documentElement.getAttribute('data-theme')));
-// markdown-lite
-const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-const cl=l=>l?'</'+l+'>':'';
-const inl=s=>esc(s).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
-function blk(t){let o='',l=null,m;for(const ln of t.split('\n')){
-if(m=ln.match(/^\s*[-*•] +(.*)/)){if(l!='ul'){o+=cl(l)+'<ul>';l='ul'}o+='<li>'+inl(m[1])+'</li>'}
-else if(m=ln.match(/^\s*\d+[.)] +(.*)/)){if(l!='ol'){o+=cl(l)+'<ol>';l='ol'}o+='<li>'+inl(m[1])+'</li>'}
-else{o+=cl(l);l=null;if(m=ln.match(/^#{1,4} +(.*)/))o+='<h4>'+inl(m[1])+'</h4>';else if(ln.trim())o+='<p>'+inl(ln)+'</p>'}}
-return o+cl(l)}
-const md=t=>t.split('```').map((p,i)=>i%2?'<pre><button class="cp">Պատճենել</button><code>'+esc(p.slice(p.indexOf('\n')+1))+'</code></pre>':blk(p)).join('');
-// render
-function msgEl(m){const d=document.createElement('div');d.className='m '+(m.role=='user'?'u':'a');if(m.role=='user')d.textContent=m.content;else{d.innerHTML=md(m.content||'…');d.insertAdjacentHTML('beforeend','<div class="act"><button class="cpa">Պատճենել պատասխանը</button></div>')}return d}
-function show(){const c=chat(),cv=$('#cv');cv.innerHTML='';$('#ttl').textContent=c?c.title:'LUMI AI';
-if(!c||!c.msgs.length){cv.innerHTML='<div id="hero"><h1>LUMI</h1><p>Ինչո՞վ կարող եմ օգնել այսօր։</p><div class="sg"></div></div>';
-['Ամփոփիր և կառուցվածքավորիր իմ տեքստը','Գրիր պրոֆեսիոնալ էլ. նամակ','Բացատրիր և ուղղիր իմ կոդը','Օգնիր պլանավորել աշխատանքային շաբաթս'].forEach(t=>{const b=document.createElement('button');b.className='btn';b.textContent=t;b.onclick=()=>{$('#in').value=t;send()};cv.querySelector('.sg').appendChild(b)})}
-else c.msgs.forEach(m=>cv.appendChild(msgEl(m)));
-$('#msgs').scrollTop=1e9;
-$('#list').innerHTML=S.chats.map(x=>'<div class="ci'+(x.id==S.cur?' on':'')+'" data-i="'+x.id+'"><span>'+esc(x.title)+'</span><b data-d="'+x.id+'">✕</b></div>').join('')}
-$('#list').onclick=e=>{const d=e.target.dataset.d;if(d){S.chats=S.chats.filter(x=>x.id!=d);if(S.cur==d)S.cur=null;sv();show();return}const i=e.target.closest('.ci');if(i&&!busy){S.cur=i.dataset.i;sv();show();$('#side').classList.remove('open')}};
-$('#new').onclick=()=>{if(busy)return;S.cur=null;show();$('#side').classList.remove('open');$('#in').focus()};
-$('#menu').onclick=()=>$('#side').classList.toggle('open');
-$('#cv').addEventListener('click',e=>{const t=e.target;if(t.classList.contains('cp'))navigator.clipboard&&navigator.clipboard.writeText(t.nextSibling.textContent).then(()=>{t.textContent='✓'});
-if(t.classList.contains('cpa'))navigator.clipboard&&navigator.clipboard.writeText(t.closest('.m').innerText.replace(/Պատճենել( պատասխանը)?/g,'').trim()).then(()=>{t.textContent='✓'})});
-// prompt
-const SYS=()=>'You are LUMI AI, a capable, precise and calm AI assistant for adults and professionals. Reply in the language of the user (default: Armenian). Be direct and well structured; use Markdown (short headings, lists, fenced code blocks) only when it helps; ask a clarifying question only when truly necessary; admit uncertainty; never invent sources, links or quotes. You cannot browse the web or open files; say so when relevant. Do not moralize; briefly decline clearly harmful requests. For medical, legal and financial topics give general information and suggest a qualified professional for decisions. If asked what powers you, say LUMI AI runs on Claude by Anthropic. Mode: '+RL[S.set.role]+(S.set.cus?'\nUser style rules (follow them): '+S.set.cus:'')+(S.set.nts?'\nFacts the user taught you (always remember): '+S.set.nts:'');
-// send
-function busyUI(b){busy=b;$('#go').textContent=b?'■ Կանգնեցնել':'Ուղարկել'}
-async function send(){if(busy){ctl&&ctl.abort();return}
-if(asking)return;
-const q=$('#in').value.trim();if(!q)return;if(SM&&PM){asking=true;try{const st=await PM.state('sample');if(st=='prompt'){const r=await PM.request(['sample']);if(r.sample!='granted'){asking=false;ban('API բանալին սխալ է կամ բացակայում է։',true);return}}}catch(e){}asking=false;if($('#perm'))$('#perm').remove()}if(!SM){ban('Նախ Կարգավորումներում ավելացրու API բանալին։');$('#setb').click();return}
-let c=chat();if(!c){c={id:uid(),title:q.slice(0,40),msgs:[]};S.chats.unshift(c);S.cur=c.id}
-c.msgs.push({role:'user',content:q});$('#in').value='';fit();show();
-const a={role:'assistant',content:''};const el=msgEl(a);$('#cv').appendChild(el);el.scrollIntoView({block:'end'});busyUI(true);ctl=new AbortController();
-const h=c.msgs.slice(-19).map((m,i)=>i==0?{role:'user',content:SYS()+'\n\n---\n'+m.content}:m);
-SM(h,{cache:false,modelTier:S.set.tier,signal:ctl.signal,onText:({text})=>{if(/^Thinking/i.test(text))return;el.innerHTML=md(text||'…');$('#msgs').scrollTop=1e9}})
-.then(r=>{c.msgs.push({role:'assistant',content:r.text})})
-.catch(e=>{if(e&&e.code=='cancelled'&&e.text)c.msgs.push({role:'assistant',content:e.text});else{c.msgs.pop();$('#in').value=q;ban(e&&e.code=='rate_limited'?'Չափից շատ հարցումներ․ մի քանի վայրկյան սպասիր։':e&&e.code=='not_granted'?'API բանալին սխալ է կամ բացակայում է։':'Չհաջողվեց պատասխանել։ Փորձիր նորից։',e&&e.code=='not_granted')}})
-.finally(()=>{busyUI(false);ctl=null;sv();show()})}
-$('#go').onclick=send;
-$('#in').addEventListener('keydown',e=>{if(e.key=='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();send()}});
-const fit=()=>{const t=$('#in');t.style.height='auto';t.style.height=Math.min(t.scrollHeight,180)+'px'};$('#in').addEventListener('input',fit);
-function ban(t,manage){const b=$('#ban');b.style.display='block';b.textContent=t+' ';if(manage&&PM){const x=document.createElement('button');x.className='btn';x.textContent='Թույլտվություններ';x.onclick=()=>PM.manage().catch(()=>{});b.appendChild(x)}setTimeout(()=>{if(!manage)b.style.display='none'},6000)}
-// settings
-$('#setb').onclick=()=>{$('#role').value=S.set.role;$('#tier').value=S.set.tier;$('#cus').value=S.set.cus;$('#nts').value=S.set.nts;$('#key').value=S.set.key||'';$('#prx').value=S.set.prx||'';$('#dlg').showModal()};
-$('#ok').onclick=()=>{S.set.role=$('#role').value;S.set.tier=$('#tier').value;S.set.cus=$('#cus').value.slice(0,1500);S.set.nts=$('#nts').value.slice(0,3000);S.set.key=$('#key').value.trim();S.set.prx=$('#prx').value.trim();sv();mkSM();$('#dlg').close()};
-$('#clr').onclick=()=>{if(confirm('Ջնջե՞լ բոլոր զրույցները')){S.chats=[];S.cur=null;sv();show();$('#dlg').close()}};
-// connect: one up-front permission dialog, then no more prompts
-let asking=false;
-const MODELS={quick:'claude-haiku-5-5',default:'claude-sonnet-5-5',complex:'claude-opus-5-5'};
-// Works on any site: direct Anthropic API with your own key, or your own proxy server
-function mkSM(){const k=S.set.key,p=S.set.prx;SM=(k||p)?async(msgs,o={})=>{
-const body={model:MODELS[o.modelTier]||MODELS.default,max_tokens:2000,stream:true,messages:msgs};
-const hd={'content-type':'application/json'};if(!p){hd['x-api-key']=k;hd['anthropic-version']='2023-06-01';hd['anthropic-dangerous-direct-browser-access']='true'}
-let text='';
-try{const r=await fetch(p||'https://api.anthropic.com/v1/messages',{method:'POST',headers:hd,body:JSON.stringify(body),signal:o.signal});
-if(!r.ok)throw{code:r.status==429?'rate_limited':(r.status==401||r.status==403)?'not_granted':'error'};
-const rd=r.body.getReader(),dc=new TextDecoder();let buf='';
-for(;;){const{done,value}=await rd.read();if(done)break;buf+=dc.decode(value,{stream:true});const ls=buf.split('\n');buf=ls.pop();
-for(const l of ls){if(!l.startsWith('data:'))continue;try{const j=JSON.parse(l.slice(5));if(j.type=='content_block_delta'&&j.delta&&j.delta.text){text+=j.delta.text;o.onText&&o.onText({text})}}catch(e){}}}
-return{text}}catch(e){if(e&&e.name=='AbortError')throw{code:'cancelled',text};throw Object.assign(e&&e.code?e:{code:'error'},{text})}}:null}
-function boot(){mkSM();if(!SM)ban('LUMI-ն միացնելու համար Կարգավորումներում ավելացրու քո API բանալին կամ սերվերի հասցեն։')}
-show();boot();
-</script>
+
+  <header>
+    <h1>🤖 Իմ AI Չատբոտ</h1>
+    <button class="key-btn" onclick="promptApiKey()">🔑 Փոխել API Key-ը</button>
+  </header>
+
+  <div id="chat-container">
+    <div class="message ai">Ողջույն։ Ես քո AI օգնականն եմ։ Ինչո՞վ կարող եմ օգնել։</div>
+  </div>
+
+  <footer>
+    <form class="input-box" onsubmit="handleSend(event)">
+      <input type="text" id="userInput" placeholder="Գրիր հարցդ այստեղ..." autocomplete="off" />
+      <button type="submit" class="send-btn">Ուղարկել</button>
+    </form>
+  </footer>
+
+  <script>
+    const chatContainer = document.getElementById('chat-container');
+    const userInput = document.getElementById('userInput');
+    let history = [
+      { role: "system", content: "You are a helpful, smart, and friendly AI assistant. Answer in the language the user speaks." }
+    ];
+
+    function getApiKey() {
+      let key = localStorage.getItem('groq_api_key');
+      if (!key) {
+        key = prompt("Խնդրում ենք մուտքագրել քո անվճար Groq API Key-ը (կարող ես վերցնել console.groq.com կայքից)՝");
+        if (key) localStorage.setItem('groq_api_key', key.trim());
+      }
+      return key;
+    }
+
+    function promptApiKey() {
+      const key = prompt("Մուտքագրիր նոր Groq API Key-ը՝", localStorage.getItem('groq_api_key') || '');
+      if (key !== null) {
+        localStorage.setItem('groq_api_key', key.trim());
+        alert("API Key-ը պահպանվեց:");
+      }
+    }
+
+    function appendMessage(text, sender) {
+      const msg = document.createElement('div');
+      msg.className = `message ${sender}`;
+      msg.innerText = text;
+      chatContainer.appendChild(msg);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    async function handleSend(e) {
+      e.preventDefault();
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      const apiKey = getApiKey();
+      if (!apiKey) {
+        alert("Առանց API Key-ի AI-ը չի կարող պատասխանել:");
+        return;
+      }
+
+      appendMessage(text, 'user');
+      userInput.value = '';
+      history.push({ role: "user", content: text });
+
+      // AI-ի պատասխանի սպասման նշան
+      const loadingMsg = document.createElement('div');
+      loadingMsg.className = 'message ai';
+      loadingMsg.innerText = 'Մտածում է...';
+      chatContainer.appendChild(loadingMsg);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+
+      try {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "llama-3.3-70b-versatile",
+            messages: history,
+            temperature: 0.7
+          })
+        });
+
+        const data = await response.json();
+        if (data.error) throw new Error(data.error.message);
+
+        const aiResponse = data.choices[0].message.content;
+        loadingMsg.innerText = aiResponse;
+        history.push({ role: "assistant", content: aiResponse });
+      } catch (err) {
+        loadingMsg.innerText = "Սխալ՝ " + err.message;
+        loadingMsg.style.color = "#ff6b6b";
+      }
+    }
+  </script>
 </body>
 </html>
