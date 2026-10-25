@@ -1,666 +1,171 @@
-```html
 <!DOCTYPE html>
 <html lang="hy">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lumi AI — Քո խելացի օգնականը</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LUMI AI</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@400;600;700&display=swap">
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-:root {
-    --bg: #0c0d14;
-    --sidebar: #11121b;
-    --panel: #171923;
-    --text: #f5f5fb;
-    --muted: #9294a8;
-    --border: #292b3a;
-    --accent: #a78bfa;
-    --accent2: #67e8f9;
-}
-
-body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: Arial, sans-serif;
-    height: 100vh;
-    overflow: hidden;
-    transition: 0.3s;
-}
-
-.app {
-    display: flex;
-    height: 100vh;
-}
-
-/* Ձախ մենյու */
-
-.sidebar {
-    width: 255px;
-    background: var(--sidebar);
-    border-right: 1px solid var(--border);
-    padding: 22px 15px;
-    display: flex;
-    flex-direction: column;
-}
-
-.logo {
-    font-size: 25px;
-    font-weight: bold;
-    margin: 8px 7px 30px;
-    letter-spacing: -1px;
-}
-
-.logo span {
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    color: transparent;
-}
-
-.new-chat {
-    padding: 13px;
-    border: 1px solid var(--border);
-    background: var(--panel);
-    color: var(--text);
-    border-radius: 13px;
-    cursor: pointer;
-    font-size: 14px;
-    text-align: left;
-    transition: .2s;
-}
-
-.new-chat:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
-}
-
-.menu-title {
-    color: var(--muted);
-    font-size: 12px;
-    margin: 28px 8px 12px;
-}
-
-.menu-item {
-    color: var(--muted);
-    padding: 12px;
-    border-radius: 10px;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.menu-item:hover {
-    background: var(--panel);
-    color: var(--text);
-}
-
-.sidebar-bottom {
-    margin-top: auto;
-    border-top: 1px solid var(--border);
-    padding-top: 16px;
-}
-
-/* Հիմնական պատուհան */
-
-.main {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-}
-
-.topbar {
-    height: 65px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 25px;
-}
-
-.model-name {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.top-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.icon-btn {
-    background: var(--panel);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 9px 12px;
-    cursor: pointer;
-}
-
-.icon-btn:hover {
-    border-color: var(--accent);
-}
-
-/* Զրույց */
-
-.chat {
-    flex: 1;
-    overflow-y: auto;
-    padding: 25px 18px 15px;
-}
-
-.chat-inner {
-    max-width: 790px;
-    margin: auto;
-}
-
-.welcome {
-    text-align: center;
-    margin: 12vh auto 35px;
-    animation: appear .6s ease;
-}
-
-.orb {
-    width: 78px;
-    height: 78px;
-    margin: 0 auto 24px;
-    border-radius: 25px;
-    display: grid;
-    place-items: center;
-    font-size: 37px;
-    background: linear-gradient(135deg, #a78bfa, #67e8f9);
-    box-shadow: 0 0 55px #a78bfa30;
-    transform: rotate(-5deg);
-}
-
-.welcome h1 {
-    font-size: clamp(27px, 4vw, 38px);
-    margin-bottom: 13px;
-    letter-spacing: -1px;
-}
-
-.welcome h1 span {
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    color: transparent;
-}
-
-.welcome p {
-    color: var(--muted);
-    line-height: 1.7;
-    font-size: 14px;
-}
-
-.suggestions {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-top: 30px;
-}
-
-.suggestion {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    color: var(--text);
-    text-align: left;
-    padding: 17px;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.suggestion:hover {
-    border-color: var(--accent);
-    transform: translateY(-3px);
-}
-
-.suggestion b {
-    display: block;
-    margin-bottom: 7px;
-    font-size: 14px;
-}
-
-.suggestion small {
-    color: var(--muted);
-    line-height: 1.5;
-}
-
-/* Հաղորդագրություններ */
-
-.message {
-    display: flex;
-    gap: 13px;
-    margin: 24px 0;
-    animation: appear .25s ease;
-    line-height: 1.75;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-}
-
-.avatar {
-    width: 34px;
-    height: 34px;
-    min-width: 34px;
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    font-size: 17px;
-}
-
-.user-avatar {
-    background: #303146;
-}
-
-.ai-avatar {
-    background: linear-gradient(135deg, #a78bfa, #67e8f9);
-}
-
-.message-content {
-    padding-top: 4px;
-    font-size: 15px;
-    flex: 1;
-}
-
-.message-name {
-    font-weight: bold;
-    font-size: 13px;
-    margin-bottom: 7px;
-}
-
-.ai-content {
-    color: var(--text);
-}
-
-.user-content {
-    background: var(--panel);
-    padding: 12px 16px;
-    border-radius: 16px;
-    border: 1px solid var(--border);
-}
-
-/* Մուտքագրման դաշտ */
-
-.composer-area {
-    padding: 12px 18px 20px;
-}
-
-.composer-wrap {
-    max-width: 790px;
-    margin: auto;
-}
-
-.composer {
-    background: var(--panel);
-    border: 1px solid #35374b;
-    border-radius: 20px;
-    padding: 12px 13px 12px 18px;
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-    transition: .2s;
-}
-
-.composer:focus-within {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px #a78bfa12;
-}
-
-textarea {
-    flex: 1;
-    min-width: 0;
-    resize: none;
-    border: none;
-    outline: none;
-    background: transparent;
-    color: var(--text);
-    font: inherit;
-    font-size: 15px;
-    line-height: 1.6;
-    max-height: 150px;
-}
-
-textarea::placeholder {
-    color: var(--muted);
-}
-
-.send-btn {
-    width: 42px;
-    height: 42px;
-    border: none;
-    border-radius: 13px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #10111a;
-    font-size: 21px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: .2s;
-}
-
-.send-btn:hover {
-    transform: scale(1.06);
-}
-
-.send-btn:disabled {
-    opacity: .5;
-    cursor: not-allowed;
-}
-
-.disclaimer {
-    color: var(--muted);
-    font-size: 11px;
-    text-align: center;
-    margin-top: 11px;
-}
-
-/* Փոքր էկրաններ */
-
-@keyframes appear {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 650px) {
-    .sidebar {
-        display: none;
-    }
-
-    .topbar {
-        padding: 0 15px;
-    }
-
-    .chat {
-        padding: 15px 13px;
-    }
-
-    .welcome {
-        margin-top: 8vh;
-    }
-
-    .suggestions {
-        grid-template-columns: 1fr;
-    }
-
-    .composer-area {
-        padding: 10px 12px 14px;
-    }
-}
-
-/* Բաց թեմա */
-
-body.light {
-    --bg: #f7f7fc;
-    --sidebar: #ffffff;
-    --panel: #ffffff;
-    --text: #202132;
-    --muted: #77798d;
-    --border: #e4e5ef;
-}
+:root{--bg:#ffffff;--pn:#f4f4f6;--tx:#1b1b1f;--mu:#6b6b76;--ac:#4f46e5;--ax:#ffffff;--bd:#e3e3e8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme]){--bg:#0b0b0e;--pn:#15151a;--tx:#ececf1;--mu:#9a9aa6;--ac:#e8e8ee;--ax:#0b0b0e;--bd:#26262e}}
+:root[data-theme="white"]{--bg:#ffffff;--pn:#f4f4f6;--tx:#1b1b1f;--mu:#6b6b76;--ac:#4f46e5;--ax:#ffffff;--bd:#e3e3e8}
+:root[data-theme="black"]{--bg:#0b0b0e;--pn:#15151a;--tx:#ececf1;--mu:#9a9aa6;--ac:#e8e8ee;--ax:#0b0b0e;--bd:#26262e}
+:root[data-theme="purple"]{--bg:#120a24;--pn:#1c1136;--tx:#f1eaff;--mu:#b2a3d9;--ac:#a855f7;--ax:#ffffff;--bd:#33215c}
+:root[data-theme="red"]{--bg:#1a0a0c;--pn:#2a1114;--tx:#ffecec;--mu:#d9a3a8;--ac:#ef4444;--ax:#ffffff;--bd:#4a1c22}
+:root[data-theme="blue"]{--bg:#0a1424;--pn:#0f1d35;--tx:#e8f1ff;--mu:#9db4d9;--ac:#3b82f6;--ax:#ffffff;--bd:#1d3358}
+:root[data-theme="green"]{--bg:#08170f;--pn:#0d2417;--tx:#e8fff1;--mu:#9ad9b4;--ac:#22c55e;--ax:#04210f;--bd:#1a3d29}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--tx);font-family:"Noto Sans Armenian","Segoe UI",Arial,sans-serif;font-size:15px}
+button,textarea,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+#app{display:flex;height:100%}
+#side{width:270px;background:var(--pn);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:12px;gap:8px}
+.logo{font-weight:700;font-size:1.3rem;letter-spacing:.14em;display:flex;align-items:center;gap:8px}
+.logo i{width:22px;height:22px;border-radius:7px;background:var(--ac);display:inline-block}
+.btn{border:1px solid var(--bd);background:transparent;border-radius:10px;padding:9px 12px;text-align:left}
+.btn:hover{border-color:var(--ac)}
+.btn.p{background:var(--ac);color:var(--ax);border-color:var(--ac);text-align:center;font-weight:600}
+#list{flex:1;overflow:auto;display:flex;flex-direction:column;gap:4px}
+.ci{display:flex;align-items:center;border-radius:9px;padding:8px 10px;cursor:pointer;gap:6px}
+.ci:hover,.ci.on{background:var(--bg)}
+.ci span{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.ci b{opacity:.5;font-weight:400}
+.ci b:hover{opacity:1}
+#main{flex:1;display:flex;flex-direction:column;min-width:0}
+#top{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--bd)}
+#top .sp{flex:1;color:var(--mu)}
+#menu{display:none}
+.sw{width:20px;height:20px;border-radius:50%;border:2px solid var(--bd);padding:0}
+.sw.on{outline:2px solid var(--ac);outline-offset:2px}
+#msgs{flex:1;overflow:auto;padding:18px 14px}
+.w{max-width:760px;margin:0 auto}
+.m{margin:0 0 18px;line-height:1.65}
+.m.u{background:var(--pn);border:1px solid var(--bd);border-radius:14px;padding:10px 14px;margin-left:auto;width:fit-content;max-width:85%;white-space:pre-wrap}
+.m.a p,.m.a ul,.m.a ol{margin:.5em 0}
+.m.a h4{margin:.9em 0 .3em;font-size:1.05rem}
+.m.a code{background:var(--pn);border:1px solid var(--bd);border-radius:5px;padding:1px 5px;font-family:Consolas,monospace;font-size:.9em}
+.m.a pre{background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:12px;overflow-x:auto;position:relative}
+.m.a pre code{border:0;padding:0;background:none}
+.cp{position:absolute;right:8px;top:8px;font-size:.75rem;padding:3px 8px;border-radius:7px;border:1px solid var(--bd);background:var(--bg)}
+.act{margin-top:4px}
+.act button{font-size:.78rem;color:var(--mu);background:none;border:0;padding:2px 6px}
+#hero{text-align:center;margin:12vh auto 0;max-width:560px}
+#hero h1{font-size:2.4rem;letter-spacing:.2em;margin:0 0 6px}
+#hero p{color:var(--mu)}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:20px}
+#bar{padding:10px 14px calc(12px + env(safe-area-inset-bottom,0px))}
+#box{display:flex;gap:8px;align-items:flex-end;border:1px solid var(--bd);background:var(--pn);border-radius:16px;padding:8px}
+#in{flex:1;border:0;background:none;resize:none;outline:none;max-height:180px;padding:6px 8px;line-height:1.5}
+#go{border:0;border-radius:11px;background:var(--ac);color:var(--ax);padding:9px 16px;font-weight:600}
+#note{text-align:center;color:var(--mu);font-size:.75rem;margin-top:6px}
+#ban{display:none;background:var(--pn);border-bottom:1px solid var(--bd);padding:8px 14px;text-align:center}
+dialog{background:var(--bg);color:var(--tx);border:1px solid var(--bd);border-radius:16px;padding:18px;width:min(520px,92vw)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+dialog label{display:block;margin:12px 0 4px;font-weight:600}
+dialog textarea,dialog select{width:100%;background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:8px}
+@media (max-width:800px){#side{position:fixed;inset:0 auto 0 0;z-index:9;transform:translateX(-100%);transition:transform .2s;padding-top:calc(12px + env(safe-area-inset-top,0px))}#side.open{transform:none}#menu{display:block}.sg{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){#side{transition:none}}
 </style>
 </head>
-
 <body>
-<div class="app">
-
-    <aside class="sidebar">
-        <div class="logo">✦ lumi<span>.ai</span></div>
-
-        <button class="new-chat" onclick="newChat()">
-            ＋ Նոր զրույց
-        </button>
-
-        <div class="menu-title">ՔՈ ՕԳՆԱԿԱՆԸ</div>
-
-        <div class="menu-item" onclick="ask('Օգնիր ինձ սովորել նոր բան')">
-            ✧ Սովորել նոր բան
-        </div>
-
-        <div class="menu-item" onclick="ask('Օգնիր ինձ գրել գեղեցիկ տեքստ')">
-            ✎ Գրել տեքստ
-        </div>
-
-        <div class="menu-item" onclick="ask('Առաջարկիր հետաքրքիր գաղափարներ')">
-            ♡ Գաղափարներ
-        </div>
-
-        <div class="menu-item" onclick="ask('Օգնիր ինձ ծրագրավորել HTML-ով')">
-            </> Ծրագրավորում
-        </div>
-
-        <div class="sidebar-bottom">
-            <div class="menu-item" onclick="toggleTheme()">
-                ◐ Փոխել թեման
-            </div>
-            <div class="menu-item" onclick="showAbout()">
-                ⓘ Մեր մասին
-            </div>
-        </div>
-    </aside>
-
-    <main class="main">
-        <div class="topbar">
-            <div class="model-name">Lumi AI <span style="color:#a78bfa">✦</span></div>
-
-            <div class="top-actions">
-                <button class="icon-btn" onclick="newChat()" title="Նոր զրույց">
-                    ＋
-                </button>
-                <button class="icon-btn" onclick="toggleTheme()" title="Թեմա">
-                    ◐
-                </button>
-            </div>
-        </div>
-
-        <div class="chat" id="chat">
-            <div class="chat-inner" id="chatInner">
-
-                <div class="welcome" id="welcome">
-                    <div class="orb">✦</div>
-
-                    <h1>Բարև՛, ի՞նչ <span>անենք այսօր։</span></h1>
-
-                    <p>
-                        Ես քո թվային օգնականն եմ։<br>
-                        Կարող ես հարցնել, սովորել, ստեղծագործել ու նոր բաներ բացահայտել։
-                    </p>
-
-                    <div class="suggestions">
-                        <button class="suggestion"
-                            onclick="ask('Բացատրիր տիեզերքը պարզ բառերով')">
-                            <b>🌌 Բացահայտել աշխարհը</b>
-                            <small>Իմացիր հետաքրքիր փաստեր ու նոր բաներ</small>
-                        </button>
-
-                        <button class="suggestion"
-                            onclick="ask('Օգնիր ինձ ստեղծել գեղեցիկ կայք HTML-ով')">
-                            <b>💻 Ստեղծել կայք</b>
-                            <small>Ծրագրավորում, HTML, CSS և գաղափարներ</small>
-                        </button>
-
-                        <button class="suggestion"
-                            onclick="ask('Օգնիր ինձ տնային առաջադրանքի հետ')">
-                            <b>📚 Սովորել հեշտությամբ</b>
-                            <small>Բացատրություններ ու տնային առաջադրանքներ</small>
-                        </button>
-
-                        <button class="suggestion"
-                            onclick="ask('Առաջարկիր մի քանի ստեղծագործ գաղափար')">
-                            <b>🎨 Ստեղծագործել</b>
-                            <small>Նոր մտքեր, պատմություններ ու դիզայն</small>
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="composer-area">
-            <div class="composer-wrap">
-                <div class="composer">
-                    <textarea
-                        id="input"
-                        rows="1"
-                        placeholder="Գրիր քո հարցը..."
-                        aria-label="Գրիր քո հաղորդագրությունը"
-                    ></textarea>
-
-                    <button class="send-btn" id="sendBtn"
-                        onclick="sendMessage()" aria-label="Ուղարկել">
-                        ↑
-                    </button>
-                </div>
-
-                <div class="disclaimer">
-                    Lumi AI-ի ցուցադրական տարբերակն է։ Պատասխանները դեռ իրական AI-ի միջոցով չեն ստեղծվում։
-                </div>
-            </div>
-        </div>
-    </main>
+<div id="app">
+<aside id="side">
+<div class="logo"><i></i>LUMI</div>
+<button class="btn p" id="new">＋ Նոր զրույց</button>
+<div id="list"></div>
+<button class="btn" id="setb">⚙️ Կարգավորումներ</button>
+</aside>
+<section id="main">
+<div id="top"><button class="btn" id="menu">☰</button><div class="sp" id="ttl">LUMI AI</div><div id="sws" style="display:flex;gap:7px"></div></div>
+<div id="ban"></div>
+<div id="msgs"><div class="w" id="cv"></div></div>
+<div id="bar"><div class="w"><div id="box"><textarea id="in" rows="1" placeholder="Գրիր քո հարցը կամ խնդիրը..."></textarea><button id="go">Ուղարկել</button></div><div id="note">LUMI AI-ը կարող է սխալվել։ Կարևոր տեղեկությունները ստուգիր։ Ինտերնետում ուղիղ չի փնտրում։</div></div></div>
+</section>
 </div>
-
+<dialog id="dlg">
+<h3 style="margin-top:0">Կարգավորումներ</h3>
+<label>Գույնի թեմա</label><div id="sws2" style="display:flex;gap:10px"></div>
+<label>Աշխատանքի ռեժիմ</label>
+<select id="role"><option value="general">Ընդհանուր օգնական</option><option value="code">Ծրագրավորում</option><option value="write">Գրություն և խմբագրում</option><option value="analyze">Վերլուծություն և հետազոտություն</option><option value="translate">Թարգմանիչ</option></select>
+<label>Պատասխանի խորություն</label>
+<select id="tier"><option value="quick">Արագ</option><option value="default">Հավասարակշռված</option><option value="complex">Խորը (ավելի դանդաղ)</option></select>
+<label>Սովորեցրու LUMI-ին՝ կանոններ և ոճ</label>
+<textarea id="cus" rows="3" placeholder="Օր.՝ Պատասխանիր կարճ և գործնական։ Ես ծրագրավորող եմ։"></textarea>
+<label>Փաստեր, որ LUMI-ն միշտ պետք է հիշի</label>
+<textarea id="nts" rows="3" placeholder="Օր.՝ Իմ ընկերությունը վաճառում է... Թիրախ հաճախորդները..."></textarea>
+<div style="display:flex;gap:8px;margin-top:16px;justify-content:space-between"><button class="btn" id="clr">🗑 Ջնջել բոլոր զրույցները</button><button class="btn p" id="ok">Պահպանել</button></div>
+</dialog>
 <script>
-const input = document.getElementById("input");
-const chatInner = document.getElementById("chatInner");
-const chat = document.getElementById("chat");
-const sendBtn = document.getElementById("sendBtn");
-
-input.addEventListener("input", () => {
-    input.style.height = "auto";
-    input.style.height = Math.min(input.scrollHeight, 150) + "px";
-});
-
-input.addEventListener("keydown", event => {
-    if (event.key === "Enter" && !event.shiftKey) {
-        event.preventDefault();
-        sendMessage();
-    }
-});
-
-function ask(text) {
-    input.value = text;
-    sendMessage();
-}
-
-function addMessage(text, isAI) {
-    const message = document.createElement("div");
-    message.className = "message";
-
-    const avatar = document.createElement("div");
-    avatar.className = "avatar " + (isAI ? "ai-avatar" : "user-avatar");
-    avatar.textContent = isAI ? "✦" : "☺";
-
-    const content = document.createElement("div");
-    content.className = "message-content";
-
-    const name = document.createElement("div");
-    name.className = "message-name";
-    name.textContent = isAI ? "Lumi AI" : "Դու";
-
-    const body = document.createElement("div");
-    body.className = isAI ? "ai-content" : "user-content";
-    body.textContent = text;
-
-    content.appendChild(name);
-    content.appendChild(body);
-    message.appendChild(avatar);
-    message.appendChild(content);
-    chatInner.appendChild(message);
-
-    chat.scrollTop = chat.scrollHeight;
-    return body;
-}
-
-function getDemoReply(text) {
-    const t = text.toLowerCase();
-
-    if (t.includes("բարև") || t.includes("բարեւ") || t.includes("hello")) {
-        return "Բարև՜ 😊 Ուրախ եմ քեզ տեսնել։ Ի՞նչ կուզես այսօր անել։";
-    }
-
-    if (t.includes("html") || t.includes("կայք") || t.includes("ծրագր")) {
-        return "Իհարկե՛ 💻 Կարող եմ օգնել HTML-ի, CSS-ի և JavaScript-ի հետ։ Ասա՝ ինչպիսի կայք ես ուզում ստեղծել, և միասին կկազմենք դրա կոդը։";
-    }
-
-    if (t.includes("տնային") || t.includes("դաս") || t.includes("մաթեմատ")) {
-        return "Սիրով կօգնեմ 📚 Ուղարկիր առաջադրանքը, և ես կփորձեմ այն բացատրել պարզ ու հասկանալի ձևով։";
-    }
-
-    if (t.includes("գաղափար") || t.includes("ստեղծագործ")) {
-        return "Ահա մի գաղափար ✨ Ստեղծիր մի փոքրիկ նախագիծ, ընտրիր սիրելի գույները և ավելացրու քո ոճը։ Եթե ասես թեման, կառաջարկեմ ավելի կոնկրետ տարբերակներ։";
-    }
-
-    if (t.includes("roblox") || t.includes("brawl stars")) {
-        return "🎮 Կարող եմ օգնել խաղերի վերաբերյալ գաղափարներով, խորհուրդներով և տեղեկություններով։ Եթե նորություններ ես փնտրում, ստուգիր նաև խաղի պաշտոնական աղբյուրները։";
-    }
-
-    return "Շնորհակալ եմ հարցիդ համար։ 💜 Այս պահին ես ցուցադրական տարբերակ եմ, ուստի չեմ կարող իրական AI-ի նման պատասխանել բոլոր հարցերին։ Ինձ լիարժեք օգնական դարձնելու համար պետք է միացնել AI ծառայություն։";
-}
-
-function sendMessage() {
-    const text = input.value.trim();
-    if (!text) return;
-
-    const welcome = document.getElementById("welcome");
-    if (welcome) welcome.remove();
-
-    addMessage(text, false);
-
-    input.value = "";
-    input.style.height = "auto";
-    sendBtn.disabled = true;
-
-    const reply = getDemoReply(text);
-
-    setTimeout(() => {
-        addMessage(reply, true);
-        sendBtn.disabled = false;
-        input.focus();
-    }, 500);
-}
-
-function newChat() {
-    chatInner.innerHTML = `
-        <div class="welcome" id="welcome">
-            <div class="orb">✦</div>
-            <h1>Բարև՛, ի՞նչ <span>անենք այսօր։</span></h1>
-            <p>Ես քո թվային օգնականն եմ։<br>
-            Կարող ես հարցնել, սովորել, ստեղծագործել ու նոր բաներ բացահայտել։</p>
-            <div class="suggestions">
-                <button class="suggestion" onclick="ask('Բացատրիր տիեզերքը պարզ բառերով')">
-                    <b>🌌 Բացահայտել աշխարհը</b>
-                    <small>Հետաքրքիր փաստեր ու նոր բաներ</small>
-                </button>
-                <button class="suggestion" onclick="ask('Օգնիր ինձ ստեղծել գեղեցիկ կայք HTML-ով')">
-                    <b>💻 Ստեղծել կայք</b>
-                    <small>Ծրագրավորում և գաղափարներ</small>
-                </button>
-                <button class="suggestion" onclick="ask('Օգնիր ինձ տնային առաջադրանքի հետ')">
-                    <b>📚 Սովորել հեշտությամբ</b>
-                    <small>Բացատրություններ ու առաջադրանքներ</small>
-                </button>
-                <button class="suggestion" onclick="ask('Առաջարկիր ստեղծագործ գաղափարներ')">
-                    <b>🎨 Ստեղծագործել</b>
-                    <small>Նոր մտքեր ու դիզայն</small>
-                </button>
-            </div>
-        </div>
-    `;
-    input.value = "";
-    input.focus();
-}
-
-function toggleTheme() {
-    document.body.classList.toggle("light");
-}
-
-function showAbout() {
-    alert("Lumi AI ✦\nԳեղեցիկ հայկական AI չաթի ցուցադրական տարբերակ։\nԻրական AI պատասխանների համար անհրաժեշտ է միացնել AI ծառայություն։");
-}
+const $=s=>document.querySelector(s);
+const TH=[['white','#ffffff'],['black','#111114'],['purple','#a855f7'],['red','#ef4444'],['blue','#3b82f6'],['green','#22c55e']];
+const RL={general:'General-purpose assistant.',code:'Focus on software engineering: write correct, minimal, well-commented code in fenced code blocks, explain trade-offs briefly, point out bugs and edge cases.',write:'Focus on writing and editing: improve clarity, tone and structure, offer concise alternatives, keep the author voice.',analyze:'Focus on analysis and research: break problems down, compare options, state assumptions, give a clear recommendation with reasoning.',translate:'Focus on translation: translate faithfully between languages, preserve tone and formatting, note ambiguous phrases briefly.'};
+let S={chats:[],cur:null,set:{theme:null,tier:'default',role:'general',cus:'',nts:''}},SM=null,PM=null,busy=false,ctl=null;
+const ld=()=>{try{const x=JSON.parse(localStorage.getItem('lumi:v1'));if(x&&x.chats)S=Object.assign(S,x)}catch(e){}};
+const sv=()=>{try{localStorage.setItem('lumi:v1',JSON.stringify(S))}catch(e){}};
+ld();
+const uid=()=>Math.random().toString(36).slice(2,9);
+const chat=()=>S.chats.find(c=>c.id==S.cur);
+// theme
+function theme(t){S.set.theme=t;document.documentElement.setAttribute('data-theme',t);document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('on',b.dataset.t==t));sv()}
+for(const id of ['#sws','#sws2'])$(id).innerHTML=TH.map(t=>'<button class="sw" title="'+t[0]+'" data-t="'+t[0]+'" style="background:'+t[1]+'"></button>').join('');
+document.addEventListener('click',e=>{const t=e.target.dataset&&e.target.dataset.t;if(t&&e.target.classList.contains('sw'))theme(t)});
+if(S.set.theme)theme(S.set.theme);else document.documentElement.setAttribute('data-theme',matchMedia('(prefers-color-scheme: dark)').matches?'black':'white');
+document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('on',b.dataset.t==document.documentElement.getAttribute('data-theme')));
+// markdown-lite
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const cl=l=>l?'</'+l+'>':'';
+const inl=s=>esc(s).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
+function blk(t){let o='',l=null,m;for(const ln of t.split('\n')){
+if(m=ln.match(/^\s*[-*•] +(.*)/)){if(l!='ul'){o+=cl(l)+'<ul>';l='ul'}o+='<li>'+inl(m[1])+'</li>'}
+else if(m=ln.match(/^\s*\d+[.)] +(.*)/)){if(l!='ol'){o+=cl(l)+'<ol>';l='ol'}o+='<li>'+inl(m[1])+'</li>'}
+else{o+=cl(l);l=null;if(m=ln.match(/^#{1,4} +(.*)/))o+='<h4>'+inl(m[1])+'</h4>';else if(ln.trim())o+='<p>'+inl(ln)+'</p>'}}
+return o+cl(l)}
+const md=t=>t.split('```').map((p,i)=>i%2?'<pre><button class="cp">Պատճենել</button><code>'+esc(p.slice(p.indexOf('\n')+1))+'</code></pre>':blk(p)).join('');
+// render
+function msgEl(m){const d=document.createElement('div');d.className='m '+(m.role=='user'?'u':'a');if(m.role=='user')d.textContent=m.content;else{d.innerHTML=md(m.content||'…');d.insertAdjacentHTML('beforeend','<div class="act"><button class="cpa">Պատճենել պատասխանը</button></div>')}return d}
+function show(){const c=chat(),cv=$('#cv');cv.innerHTML='';$('#ttl').textContent=c?c.title:'LUMI AI';
+if(!c||!c.msgs.length){cv.innerHTML='<div id="hero"><h1>LUMI</h1><p>Ինչո՞վ կարող եմ օգնել այսօր։</p><div class="sg"></div></div>';
+['Ամփոփիր և կառուցվածքավորիր իմ տեքստը','Գրիր պրոֆեսիոնալ էլ. նամակ','Բացատրիր և ուղղիր իմ կոդը','Օգնիր պլանավորել աշխատանքային շաբաթս'].forEach(t=>{const b=document.createElement('button');b.className='btn';b.textContent=t;b.onclick=()=>{$('#in').value=t;send()};cv.querySelector('.sg').appendChild(b)})}
+else c.msgs.forEach(m=>cv.appendChild(msgEl(m)));
+$('#msgs').scrollTop=1e9;
+$('#list').innerHTML=S.chats.map(x=>'<div class="ci'+(x.id==S.cur?' on':'')+'" data-i="'+x.id+'"><span>'+esc(x.title)+'</span><b data-d="'+x.id+'">✕</b></div>').join('')}
+$('#list').onclick=e=>{const d=e.target.dataset.d;if(d){S.chats=S.chats.filter(x=>x.id!=d);if(S.cur==d)S.cur=null;sv();show();return}const i=e.target.closest('.ci');if(i&&!busy){S.cur=i.dataset.i;sv();show();$('#side').classList.remove('open')}};
+$('#new').onclick=()=>{if(busy)return;S.cur=null;show();$('#side').classList.remove('open');$('#in').focus()};
+$('#menu').onclick=()=>$('#side').classList.toggle('open');
+$('#cv').addEventListener('click',e=>{const t=e.target;if(t.classList.contains('cp'))navigator.clipboard&&navigator.clipboard.writeText(t.nextSibling.textContent).then(()=>{t.textContent='✓'});
+if(t.classList.contains('cpa'))navigator.clipboard&&navigator.clipboard.writeText(t.closest('.m').innerText.replace(/Պատճենել( պատասխանը)?/g,'').trim()).then(()=>{t.textContent='✓'})});
+// prompt
+const SYS=()=>'You are LUMI AI, a capable, precise and calm AI assistant for adults and professionals. Reply in the language of the user (default: Armenian). Be direct and well structured; use Markdown (short headings, lists, fenced code blocks) only when it helps; ask a clarifying question only when truly necessary; admit uncertainty; never invent sources, links or quotes. You cannot browse the web or open files; say so when relevant. Do not moralize; briefly decline clearly harmful requests. For medical, legal and financial topics give general information and suggest a qualified professional for decisions. If asked what powers you, you may say LUMI AI runs on Claude by Anthropic. Mode: '+RL[S.set.role]+(S.set.cus?'\nUser style rules (follow them): '+S.set.cus:'')+(S.set.nts?'\nFacts the user taught you (always remember): '+S.set.nts:'');
+// send
+function busyUI(b){busy=b;$('#go').textContent=b?'■ Կանգնեցնել':'Ուղարկել'}
+async function send(){if(busy){ctl&&ctl.abort();return}
+if(asking)return;
+const q=$('#in').value.trim();if(!q)return;if(SM&&PM){asking=true;try{const st=await PM.state('sample');if(st=='prompt'){const r=await PM.request(['sample']);if(r.sample!='granted'){asking=false;ban('LUMI-ի թույլտվությունը տրված չէ։',true);return}}}catch(e){}asking=false;if($('#perm'))$('#perm').remove()}if(!SM){ban('LUMI-ն հասանելի չէ այս հարթակում։');return}
+let c=chat();if(!c){c={id:uid(),title:q.slice(0,40),msgs:[]};S.chats.unshift(c);S.cur=c.id}
+c.msgs.push({role:'user',content:q});$('#in').value='';fit();show();
+const a={role:'assistant',content:''};const el=msgEl(a);$('#cv').appendChild(el);el.scrollIntoView({block:'end'});busyUI(true);ctl=new AbortController();
+const h=c.msgs.slice(-19).map((m,i)=>i==0?{role:'user',content:SYS()+'\n\n---\n'+m.content}:m);
+SM(h,{cache:false,modelTier:S.set.tier,signal:ctl.signal,onText:({text})=>{if(/^Thinking/i.test(text))return;el.innerHTML=md(text||'…');$('#msgs').scrollTop=1e9}})
+.then(r=>{c.msgs.push({role:'assistant',content:r.text})})
+.catch(e=>{if(e&&e.code=='cancelled'&&e.text)c.msgs.push({role:'assistant',content:e.text});else{c.msgs.pop();$('#in').value=q;ban(e&&e.code=='rate_limited'?'Չափից շատ հարցումներ․ մի քանի վայրկյան սպասիր։':e&&e.code=='not_granted'?'LUMI-ի թույլտվությունը տրված չէ։':'Չհաջողվեց պատասխանել։ Փորձիր նորից։',e&&e.code=='not_granted')}})
+.finally(()=>{busyUI(false);ctl=null;sv();show()})}
+$('#go').onclick=send;
+$('#in').addEventListener('keydown',e=>{if(e.key=='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();send()}});
+const fit=()=>{const t=$('#in');t.style.height='auto';t.style.height=Math.min(t.scrollHeight,180)+'px'};$('#in').addEventListener('input',fit);
+function ban(t,manage){const b=$('#ban');b.style.display='block';b.textContent=t+' ';if(manage&&PM){const x=document.createElement('button');x.className='btn';x.textContent='Թույլտվություններ';x.onclick=()=>PM.manage().catch(()=>{});b.appendChild(x)}setTimeout(()=>{if(!manage)b.style.display='none'},6000)}
+// settings
+$('#setb').onclick=()=>{$('#role').value=S.set.role;$('#tier').value=S.set.tier;$('#cus').value=S.set.cus;$('#nts').value=S.set.nts;$('#dlg').showModal()};
+$('#ok').onclick=()=>{S.set.role=$('#role').value;S.set.tier=$('#tier').value;S.set.cus=$('#cus').value.slice(0,1500);S.set.nts=$('#nts').value.slice(0,3000);sv();$('#dlg').close()};
+$('#clr').onclick=()=>{if(confirm('Ջնջե՞լ բոլոր զրույցները')){S.chats=[];S.cur=null;sv();show();$('#dlg').close()}};
+// connect: one up-front permission dialog, then no more prompts
+let asking=false;
+async function boot(){if(!(window.claude&&claude.use)){ban('LUMI-ն աշխատում է միայն Claude-ի էջում։');return}
+SM=await claude.use('sample');PM=await claude.use('permissions').catch(()=>null);
+if(!SM){ban('LUMI-ն հասանելի չէ այս հարթակում։');return}
+if(PM){try{const st=await PM.state('sample');if(st=='prompt'){const x=document.createElement('button');x.id='perm';x.className='btn';x.textContent='🔓 Միացնել LUMI';x.onclick=async()=>{x.disabled=true;try{await PM.request(['sample'])}catch(e){}x.remove()};$('#top').insertBefore(x,$('#sws'))}const s2=await PM.state('sample');if(s2=='denied')ban('LUMI-ի օգտագործման թույլտվությունը մերժված է։',true)}catch(e){}}}
+show();boot();
 </script>
 </body>
 </html>
-```
