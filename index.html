@@ -95,6 +95,8 @@ dialog textarea,dialog select{width:100%;background:var(--pn);border:1px solid v
 <textarea id="cus" rows="3" placeholder="Օր.՝ Պատասխանիր կարճ և գործնական։ Ես ծրագրավորող եմ։"></textarea>
 <label>Փաստեր, որ LUMI-ն միշտ պետք է հիշի</label>
 <textarea id="nts" rows="3" placeholder="Օր.՝ Իմ ընկերությունը վաճառում է... Թիրախ հաճախորդները..."></textarea>
+<label>Anthropic API բանալի (պահվում է միայն քո բրաուզերում)</label><input id="key" type="password" placeholder="sk-ant-..." style="width:100%;background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:8px">
+<label>Կամ քո սերվերի հասցեն (proxy, ոչ պարտադիր)</label><input id="prx" placeholder="https://քո-սերվերը/chat" style="width:100%;background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:8px">
 <div style="display:flex;gap:8px;margin-top:16px;justify-content:space-between"><button class="btn" id="clr">🗑 Ջնջել բոլոր զրույցները</button><button class="btn p" id="ok">Պահպանել</button></div>
 </dialog>
 <script>
@@ -137,34 +139,43 @@ $('#menu').onclick=()=>$('#side').classList.toggle('open');
 $('#cv').addEventListener('click',e=>{const t=e.target;if(t.classList.contains('cp'))navigator.clipboard&&navigator.clipboard.writeText(t.nextSibling.textContent).then(()=>{t.textContent='✓'});
 if(t.classList.contains('cpa'))navigator.clipboard&&navigator.clipboard.writeText(t.closest('.m').innerText.replace(/Պատճենել( պատասխանը)?/g,'').trim()).then(()=>{t.textContent='✓'})});
 // prompt
-const SYS=()=>'You are LUMI AI, a capable, precise and calm AI assistant for adults and professionals. Reply in the language of the user (default: Armenian). Be direct and well structured; use Markdown (short headings, lists, fenced code blocks) only when it helps; ask a clarifying question only when truly necessary; admit uncertainty; never invent sources, links or quotes. You cannot browse the web or open files; say so when relevant. Do not moralize; briefly decline clearly harmful requests. For medical, legal and financial topics give general information and suggest a qualified professional for decisions. If asked what powers you, you may say LUMI AI runs on Claude by Anthropic. Mode: '+RL[S.set.role]+(S.set.cus?'\nUser style rules (follow them): '+S.set.cus:'')+(S.set.nts?'\nFacts the user taught you (always remember): '+S.set.nts:'');
+const SYS=()=>'You are LUMI AI, a capable, precise and calm AI assistant for adults and professionals. Reply in the language of the user (default: Armenian). Be direct and well structured; use Markdown (short headings, lists, fenced code blocks) only when it helps; ask a clarifying question only when truly necessary; admit uncertainty; never invent sources, links or quotes. You cannot browse the web or open files; say so when relevant. Do not moralize; briefly decline clearly harmful requests. For medical, legal and financial topics give general information and suggest a qualified professional for decisions. If asked what powers you, say LUMI AI runs on Claude by Anthropic. Mode: '+RL[S.set.role]+(S.set.cus?'\nUser style rules (follow them): '+S.set.cus:'')+(S.set.nts?'\nFacts the user taught you (always remember): '+S.set.nts:'');
 // send
 function busyUI(b){busy=b;$('#go').textContent=b?'■ Կանգնեցնել':'Ուղարկել'}
 async function send(){if(busy){ctl&&ctl.abort();return}
 if(asking)return;
-const q=$('#in').value.trim();if(!q)return;if(SM&&PM){asking=true;try{const st=await PM.state('sample');if(st=='prompt'){const r=await PM.request(['sample']);if(r.sample!='granted'){asking=false;ban('LUMI-ի թույլտվությունը տրված չէ։',true);return}}}catch(e){}asking=false;if($('#perm'))$('#perm').remove()}if(!SM){ban('LUMI-ն հասանելի չէ այս հարթակում։');return}
+const q=$('#in').value.trim();if(!q)return;if(SM&&PM){asking=true;try{const st=await PM.state('sample');if(st=='prompt'){const r=await PM.request(['sample']);if(r.sample!='granted'){asking=false;ban('API բանալին սխալ է կամ բացակայում է։',true);return}}}catch(e){}asking=false;if($('#perm'))$('#perm').remove()}if(!SM){ban('Նախ Կարգավորումներում ավելացրու API բանալին։');$('#setb').click();return}
 let c=chat();if(!c){c={id:uid(),title:q.slice(0,40),msgs:[]};S.chats.unshift(c);S.cur=c.id}
 c.msgs.push({role:'user',content:q});$('#in').value='';fit();show();
 const a={role:'assistant',content:''};const el=msgEl(a);$('#cv').appendChild(el);el.scrollIntoView({block:'end'});busyUI(true);ctl=new AbortController();
 const h=c.msgs.slice(-19).map((m,i)=>i==0?{role:'user',content:SYS()+'\n\n---\n'+m.content}:m);
 SM(h,{cache:false,modelTier:S.set.tier,signal:ctl.signal,onText:({text})=>{if(/^Thinking/i.test(text))return;el.innerHTML=md(text||'…');$('#msgs').scrollTop=1e9}})
 .then(r=>{c.msgs.push({role:'assistant',content:r.text})})
-.catch(e=>{if(e&&e.code=='cancelled'&&e.text)c.msgs.push({role:'assistant',content:e.text});else{c.msgs.pop();$('#in').value=q;ban(e&&e.code=='rate_limited'?'Չափից շատ հարցումներ․ մի քանի վայրկյան սպասիր։':e&&e.code=='not_granted'?'LUMI-ի թույլտվությունը տրված չէ։':'Չհաջողվեց պատասխանել։ Փորձիր նորից։',e&&e.code=='not_granted')}})
+.catch(e=>{if(e&&e.code=='cancelled'&&e.text)c.msgs.push({role:'assistant',content:e.text});else{c.msgs.pop();$('#in').value=q;ban(e&&e.code=='rate_limited'?'Չափից շատ հարցումներ․ մի քանի վայրկյան սպասիր։':e&&e.code=='not_granted'?'API բանալին սխալ է կամ բացակայում է։':'Չհաջողվեց պատասխանել։ Փորձիր նորից։',e&&e.code=='not_granted')}})
 .finally(()=>{busyUI(false);ctl=null;sv();show()})}
 $('#go').onclick=send;
 $('#in').addEventListener('keydown',e=>{if(e.key=='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();send()}});
 const fit=()=>{const t=$('#in');t.style.height='auto';t.style.height=Math.min(t.scrollHeight,180)+'px'};$('#in').addEventListener('input',fit);
 function ban(t,manage){const b=$('#ban');b.style.display='block';b.textContent=t+' ';if(manage&&PM){const x=document.createElement('button');x.className='btn';x.textContent='Թույլտվություններ';x.onclick=()=>PM.manage().catch(()=>{});b.appendChild(x)}setTimeout(()=>{if(!manage)b.style.display='none'},6000)}
 // settings
-$('#setb').onclick=()=>{$('#role').value=S.set.role;$('#tier').value=S.set.tier;$('#cus').value=S.set.cus;$('#nts').value=S.set.nts;$('#dlg').showModal()};
-$('#ok').onclick=()=>{S.set.role=$('#role').value;S.set.tier=$('#tier').value;S.set.cus=$('#cus').value.slice(0,1500);S.set.nts=$('#nts').value.slice(0,3000);sv();$('#dlg').close()};
+$('#setb').onclick=()=>{$('#role').value=S.set.role;$('#tier').value=S.set.tier;$('#cus').value=S.set.cus;$('#nts').value=S.set.nts;$('#key').value=S.set.key||'';$('#prx').value=S.set.prx||'';$('#dlg').showModal()};
+$('#ok').onclick=()=>{S.set.role=$('#role').value;S.set.tier=$('#tier').value;S.set.cus=$('#cus').value.slice(0,1500);S.set.nts=$('#nts').value.slice(0,3000);S.set.key=$('#key').value.trim();S.set.prx=$('#prx').value.trim();sv();mkSM();$('#dlg').close()};
 $('#clr').onclick=()=>{if(confirm('Ջնջե՞լ բոլոր զրույցները')){S.chats=[];S.cur=null;sv();show();$('#dlg').close()}};
 // connect: one up-front permission dialog, then no more prompts
 let asking=false;
-async function boot(){if(!(window.claude&&claude.use)){ban('LUMI-ն աշխատում է միայն Claude-ի էջում։');return}
-SM=await claude.use('sample');PM=await claude.use('permissions').catch(()=>null);
-if(!SM){ban('LUMI-ն հասանելի չէ այս հարթակում։');return}
-if(PM){try{const st=await PM.state('sample');if(st=='prompt'){const x=document.createElement('button');x.id='perm';x.className='btn';x.textContent='🔓 Միացնել LUMI';x.onclick=async()=>{x.disabled=true;try{await PM.request(['sample'])}catch(e){}x.remove()};$('#top').insertBefore(x,$('#sws'))}const s2=await PM.state('sample');if(s2=='denied')ban('LUMI-ի օգտագործման թույլտվությունը մերժված է։',true)}catch(e){}}}
+const MODELS={quick:'claude-haiku-5-5',default:'claude-sonnet-5-5',complex:'claude-opus-5-5'};
+// Works on any site: direct Anthropic API with your own key, or your own proxy server
+function mkSM(){const k=S.set.key,p=S.set.prx;SM=(k||p)?async(msgs,o={})=>{
+const body={model:MODELS[o.modelTier]||MODELS.default,max_tokens:2000,stream:true,messages:msgs};
+const hd={'content-type':'application/json'};if(!p){hd['x-api-key']=k;hd['anthropic-version']='2023-06-01';hd['anthropic-dangerous-direct-browser-access']='true'}
+let text='';
+try{const r=await fetch(p||'https://api.anthropic.com/v1/messages',{method:'POST',headers:hd,body:JSON.stringify(body),signal:o.signal});
+if(!r.ok)throw{code:r.status==429?'rate_limited':(r.status==401||r.status==403)?'not_granted':'error'};
+const rd=r.body.getReader(),dc=new TextDecoder();let buf='';
+for(;;){const{done,value}=await rd.read();if(done)break;buf+=dc.decode(value,{stream:true});const ls=buf.split('\n');buf=ls.pop();
+for(const l of ls){if(!l.startsWith('data:'))continue;try{const j=JSON.parse(l.slice(5));if(j.type=='content_block_delta'&&j.delta&&j.delta.text){text+=j.delta.text;o.onText&&o.onText({text})}}catch(e){}}}
+return{text}}catch(e){if(e&&e.name=='AbortError')throw{code:'cancelled',text};throw Object.assign(e&&e.code?e:{code:'error'},{text})}}:null}
+function boot(){mkSM();if(!SM)ban('LUMI-ն միացնելու համար Կարգավորումներում ավելացրու քո API բանալին կամ սերվերի հասցեն։')}
 show();boot();
 </script>
 </body>
